@@ -1,0 +1,15 @@
+main.dart	  	: Archivo principal de nuestro proyecto, inicia y ejecuta nuestra app.
+app.dart	  	: Construye el widget(MaterialApp) base de nuestro app, además de usar las rutas con las que trabajará nuestra app
+
+
+carpeta routes      : Archivos que trabajan con las rutas del app
+    routing_constants.dart	: Urls de nuestras rutas
+    router.dart		: Trabajamos con las rutas y sus respectivas screen/vistas/paginas
+carpeta styles      : Estilos que podran ser reutilizados por nuestro app
+carpeta screens	  	: Paginas/Vistas de nuestra app
+carpeta models 	  	: Modelos de nuestras entidades
+carpeta common 	  	: Widgets personalizados que podran ser reutilizados.
+carpeta providers 	: Clases que consumiran de los servicios web y proveeran de informacion al app
+
+
+
