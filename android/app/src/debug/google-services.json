@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "155837632745",
+    "project_id": "test-analytics-ab5b5",
+    "storage_bucket": "test-analytics-ab5b5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:155837632745:android:04e635c5079df40cdda078",
+        "android_client_info": {
+          "package_name": "com.pepele.agent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "155837632745-uomot3aoi5kl3uqkt1713n1cu42ruinr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pepele.agent",
+            "certificate_hash": "b565310f8925dba2fdfcb3eb16a3161d32b6eead"
+          }
+        },
+        {
+          "client_id": "155837632745-ioq3cekadjsebq55kkgr94mk9gltt9aq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiPnS4e_rH3kD_D4LCkuyPXd90HsBRTVI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "155837632745-ioq3cekadjsebq55kkgr94mk9gltt9aq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

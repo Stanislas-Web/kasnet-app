@@ -65,7 +65,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
   List<String> _collectionCurrent = [];
 
   late int state;
-  late BuildContext contextLB;
+  BuildContext? contextLB;  // Rendre nullable
 
   var _scaffoldKey;
 
@@ -133,7 +133,9 @@ class _VisitAgentState extends State<VisitAgentSFull> {
             );
           }),
           Logo(isKeyboard: isKeyboard),
-          _loading(screenHeight, screenWidth, contextLB)
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return _loading(screenHeight, screenWidth, context);
+          })
         ],
       ),
     );
@@ -283,7 +285,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                   Container(
                     padding: EdgeInsets.all(5),
                     width: screenWidth * 0.85,
-                    height: 50,
+                    height: 80,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.white),

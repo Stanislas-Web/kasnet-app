@@ -43,7 +43,7 @@ class _LoginViewState extends State<LoginViewSFull>
   
   GoogleSignInAccount? _currentUser;
   late GoogleSignIn _googleSignIn;
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool actualVersion = true;
   bool _messageShown = false;
 
@@ -54,9 +54,43 @@ class _LoginViewState extends State<LoginViewSFull>
   void initState() {
     super.initState();
     _googleSignIn = GoogleSignIn.instance;
-    _googleSignIn.initialize().then((_) {
+    _googleSignIn.initialize(
+      serverClientId: '155837632745-ioq3cekadjsebq55kkgr94mk9gltt9aq.apps.googleusercontent.com',
+    ).then((_) {
       // GoogleSignIn initialisé
     });
+    
+    // Écouter les événements d'authentification
+    _googleSignIn.authenticationEvents.listen((event) async {
+      if (event is GoogleSignInAuthenticationEventSignIn) {
+        final GoogleSignInAccount account = event.user;
+        try {
+          final GoogleSignInAuthentication auth = await account.authentication;
+          if (mounted) {
+            BlocProvider.of<LoginBloc>(context)
+                .add(DoLoginEvent(
+                  token: auth.idToken ?? '', 
+                  email: account.email ?? '',
+                  response: ''
+                ));
+          }
+        } catch (e) {
+          print('Erreur auth: $e');
+        }
+        if (mounted) {
+          setState(() {
+            _currentUser = account;
+          });
+        }
+      } else if (event is GoogleSignInAuthenticationEventSignOut) {
+        if (mounted) {
+          setState(() {
+            _currentUser = null;
+          });
+        }
+      }
+    });
+    
     BlocProvider.of<GeneralBloc>(context).add(MatchVersionEvent());
   }
 
@@ -204,37 +238,23 @@ class _LoginViewState extends State<LoginViewSFull>
         borderRadius: BorderRadius.circular(5),
       ),
       child: MaterialButton(
-        // onPressed: () async {
-          
-        //   try {
-        //     // GoogleSignIn 7.x uses instance and doesn't have direct signIn
-        //     // The authentication flow should be handled differently
-        //     // For now, create a placeholder that works with the new API
-        //     print(" New GoogleSignIn 7.x requires updated authentication flow ");
-        //     setState(() {
-        //       _isLoading = true;
-        //     });
-        //     // TODO: Implement proper GoogleSignIn 7.x authentication flow
-        //     // This requires updating the entire authentication mechanism
-        //   } catch (error) {
-        //     CustomSnackbar.snackBar(
-        //         contextSnack: snackContext,
-        //         isError: true,
-        //         message: "Identifiants incorrects");
-        //   } finally {
-        //     setState(() {
-        //       _isLoading = false;
-        //     });
-        //   }
-        // },
-                onPressed: () async {
+        onPressed: () async {
           try {
-            await _googleSignIn.authenticate();
+            setState(() {
+              _isLoading = true;
+            });
+            final result = await _googleSignIn.authenticate();
+            print('✅ Auth réussie: ${result.email}');
           } catch (error) {
+            print('❌ Erreur Google Sign-In: $error');
             CustomSnackbar.snackBar(
                 contextSnack: snackContext,
                 isError: true,
-                message: "Credenciales incorrectas");
+                message: "Erreur: $error");
+          } finally {
+            setState(() {
+              _isLoading = false;
+            });
           }
         },
         child: Row(

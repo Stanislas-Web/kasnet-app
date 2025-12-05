@@ -5,9 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class WService {
-  static const env = String.fromEnvironment('env', defaultValue: "45454");
-  final url = env == "dev" ? "" : env == "qa" ? "" : env == "prod" ? "" : "";
-
+  static const env = String.fromEnvironment('env', defaultValue: "dev");
+   final url = env == "dev" ? "http://10.0.2.2:8080/" : env == "qa" ? "" : env == "prod" ? "" : "";
   HttpClient client = HttpClient();
   String sessionToken = "";
   String sessionnEmail = "";

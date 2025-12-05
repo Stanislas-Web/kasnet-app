@@ -16,10 +16,13 @@ class LoginBloc extends Bloc<LoginBlocEvent, LoginBlocState> {
 
   Future<void> _onDoLogin(DoLoginEvent event, Emitter<LoginBlocState> emit) async {
     emit(LoadingLoginState());
+    print('🔵 DoLoginEvent reçu - Email: ${event.email}');
     try {
       await logicLogin!.login(token: event.token, email: event.email);
       emit(DoLoginState(response: {'message': 'Login successful'}));
     } catch (e) {
+      print('🔴 Exception dans LoginBloc: $e');
+      print('🔴 Type: ${e.runtimeType}');
       if (e is LoginFormatException || e == LoginFormatException) {
         emit(ErrorInLoginState(
             response: 'Error de comunicación')); // Error en el formato de envío
