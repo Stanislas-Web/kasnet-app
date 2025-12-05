@@ -102,12 +102,13 @@ class _VisitAgentState extends State<VisitAgentSFull> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: PrimaryThemeColor,
-        title: Text("Recherche d'agents"),
+        title: Text("Recherche d'agents", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.input),
+              icon: Icon(Icons.input, color: Colors.white),
               onPressed: () async {
                 final action = await CustomDialogConfirm.yesAbortDialog(
                     context, "", "Voulez-vous vous déconnecter ?");

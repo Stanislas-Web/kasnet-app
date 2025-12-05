@@ -85,7 +85,7 @@ class _MapState extends State<LocationAgentViewSF> {
   double pdTopFormEmail = 0;
   double pdHListDocuments = 0;
   bool _isLoading = true;
-  late BuildContext contextLB;
+  BuildContext? contextLB;  // Rendre nullable
   late GoogleSignIn _googleSignIn;
   late GoogleMapController mapController;
   MapType _currentMapType = MapType.normal;
@@ -145,7 +145,7 @@ class _MapState extends State<LocationAgentViewSF> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Text("Dirección: ",
+          Text("Adresse : ",
               style: LabelBlueNormalInputTextStyle, maxLines: 2),
           Flexible(
               child: Text(address,
@@ -165,7 +165,7 @@ class _MapState extends State<LocationAgentViewSF> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Text("Latitud: ", style: LabelBlueNormalInputTextStyle),
+          Text("Latitude : ", style: LabelBlueNormalInputTextStyle),
           Text(latitud,
               style: new TextStyle(
                   color: PrimaryThemeColor,
@@ -183,7 +183,7 @@ class _MapState extends State<LocationAgentViewSF> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Text("Longitud: ", style: LabelBlueNormalInputTextStyle),
+          Text("Longitude : ", style: LabelBlueNormalInputTextStyle),
           Text(longitud,
               style: new TextStyle(
                   color: PrimaryThemeColor,
@@ -204,15 +204,16 @@ class _MapState extends State<LocationAgentViewSF> {
     return Scaffold(
       backgroundColor: PrimaryThemeColor,
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         backgroundColor: PrimaryThemeColor,
-        title: Text("Ubicación del Agente"),
+        title: Text("Localisation de l'agent", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.input),
               onPressed: () async {
                 final action = await CustomDialogConfirm.yesAbortDialog(
-                    context, "", "¿Desea cerrar sesión?");
+                    context, "", "Voulez-vous vous déconnecter ?");
                 if (action == DialogAction.yes) {
                   WService.clearPref();
                   _googleSignIn.signOut();
@@ -245,9 +246,15 @@ class _MapState extends State<LocationAgentViewSF> {
             );
           }),
           Logo(isKeyboard: isKeyboard),
-          _loading(screenHeight: screenHeight, screenWidth: screenWidth, contextSnack: contextLB),
-          _verifyUpdateVisit(contextLB),
-          _verifyUpdateAgent(contextLB),
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return _loading(screenHeight: screenHeight, screenWidth: screenWidth, contextSnack: context);
+          }),
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return _verifyUpdateVisit(context);
+          }),
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return _verifyUpdateAgent(context);
+          }),
         ],
       ),
     );
@@ -300,7 +307,7 @@ class _MapState extends State<LocationAgentViewSF> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         CheckboxListTile(
-          title: Text("Actualizar la ubicación del agente",
+          title: Text("Mettre à jour la localisation de l'agent",
               maxLines: 2,
               style: new TextStyle(
                   color: PrimaryThemeColor,
@@ -437,7 +444,7 @@ class _MapState extends State<LocationAgentViewSF> {
                     }),
                 Padding(
                     padding: const EdgeInsets.all(5.0),
-                    child: new Text("Ubicación actual",
+                    child: new Text("Localisation actuelle",
                         style: LabelBlueNormalInputTextStyle,
                         textAlign: TextAlign.center))
               ],
@@ -464,7 +471,7 @@ class _MapState extends State<LocationAgentViewSF> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text("Tomar foto tienda",
+            Text("Prendre photo du magasin",
                 style: TextStyle(
                     color: PrimaryThemeColor, fontSize: screenWidth * 0.050)),
             Icon(Icons.arrow_forward_ios, color: PrimaryThemeColor)
@@ -483,13 +490,13 @@ class _MapState extends State<LocationAgentViewSF> {
         } else {
           if (currentlocation == null && updateLocation == null) {
             _info.CustomDialogInfo.infoDialog(
-                context, "", "Es necesario la actualización del agente");
+                context, "", "La mise à jour de l'agent est nécessaire");
             return;
           }
 
           if (updateLocation == null && currentlocation != null) {
             final action = await CustomDialogConfirm.yesAbortDialog(context, "",
-                "¿Esta seguro de continuar la visita sin actualizar la ubicación?");
+                "Êtes-vous sûr de continuer la visite sans mettre à jour la localisation ?");
             if (action == DialogAction.yes) {
               visitReceived.latitud = agentData.latitud;
               visitReceived.longitud = agentData.longitud;
@@ -499,7 +506,7 @@ class _MapState extends State<LocationAgentViewSF> {
             }
           } else {
             final action = await CustomDialogConfirm.yesAbortDialog(context, "",
-                "¿Está seguro de actualizar la tienda con ubicación Indicada?");
+                "Êtes-vous sûr de mettre à jour le magasin avec la localisation indiquée ?");
             if (action == DialogAction.yes) {
               if (agentData != null && updateLocation != null) {
                 agentData.latitud = updateLocation.latitude.toString();
@@ -532,7 +539,7 @@ class _MapState extends State<LocationAgentViewSF> {
         }
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -543,7 +550,7 @@ class _MapState extends State<LocationAgentViewSF> {
           CustomSnackbar.snackBar(
               contextSnack: context,
               isError: true,
-              message: "No se pudo conseguir la data del agente");
+              message: "Impossible d'obtenir les données de l'agent");
         }
       },
       child: BlocBuilder<VisitBloc, VisitBlocState>(builder: (context, state) {
@@ -578,12 +585,12 @@ class _MapState extends State<LocationAgentViewSF> {
           CustomSnackbar.snackBar(
               contextSnack: contextSnack,
               isError: true,
-              message: "No se pudo actualizar la data");
+              message: "Impossible de mettre à jour les données");
         }
 
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -630,14 +637,14 @@ class _MapState extends State<LocationAgentViewSF> {
               }
             } else {
               //address = "Avenida caminos del inca 777 ";
-              latitud = "Ubicacion no registrada";
+              latitud = "Localisation non enregistrée";
               longitud = "-";
               if (state.agentData.latitud == "-12.124656" &&
                   state.agentData.longitud == "-76.99395") {
                 CustomSnackbar.snackBar(
                     contextSnack: context,
                     isError: true,
-                    message: "Ubicacion globokas");
+                    message: "Localisation Globokas");
               }
             }
           });
@@ -653,7 +660,7 @@ class _MapState extends State<LocationAgentViewSF> {
         }
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -664,7 +671,7 @@ class _MapState extends State<LocationAgentViewSF> {
           CustomSnackbar.snackBar(
               contextSnack: context,
               isError: true,
-              message: "No se pudo actualizar la data del agente");
+              message: "Impossible de mettre à jour les données de l'agent");
         }
       },
       child: BlocBuilder<VisitBloc, VisitBlocState>(

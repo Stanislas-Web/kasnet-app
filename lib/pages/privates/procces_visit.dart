@@ -49,12 +49,22 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
   final Visit visitReceived;
   // AutoCompleteTextField removed - deprecated package
   // GlobalKey<AutoCompleteTextFieldState<dynamic>> key = GlobalKey();
-  String _stateText = "Seleccione Estado";
+  String _stateText = "Sélectionnez l'état";
   bool _isLoading = false;
 
-  late BuildContext contextLB;
+  BuildContext? contextLB;  // Rendre nullable
 
   List<Process> _proccessList = [];
+  
+  // Map de traduction espagnol -> français
+  final Map<String, String> _translations = {
+    "Instalacion de Equipo": "Installation d'équipement",
+    "Capacitacion": "Formation",
+    "Mantenimiento de Equipos y Suministro": "Maintenance d'équipements et fournitures",
+    "Seguimiento Comercial": "Suivi commercial",
+    "Recojo de Equipo": "Récupération d'équipement",
+    "Encargo Varios": "Tâches diverses",
+  };
 
   late GoogleSignIn _googleSignIn;
 
@@ -100,14 +110,15 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: PrimaryThemeColor,
-        title: Text("Visita Agente"),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Visite d'agent", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.input),
               onPressed: () async {
                 final action = await CustomDialogConfirm.yesAbortDialog(
-                    context, "", "¿Desea cerrar sesión?");
+                    context, "", "Voulez-vous vous déconnecter ?");
                 if (action == DialogAction.yes) {
                   WService.clearPref();
                   _googleSignIn.signOut();
@@ -130,7 +141,9 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
             );
           }),
           Logo(isKeyboard: isKeyboard),
-          _loading(screenHeight, screenWidth, contextLB),
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return _loading(screenHeight, screenWidth, context);
+          }),
           _verifyUpdateVisit(),
         ],
       ),
@@ -175,12 +188,17 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
         children: <Widget>[
           Padding(
             padding: const EdgeInsets.only(left: 0),
-            child: Text("Escoger la(s) actividad(es) a realizar:",
+            child: Text("Choisissez la/les activité(s) à réaliser :",
                 style: LabelBlueBoldInputTextStyle, textAlign: TextAlign.start),
           ),
           BlocListener<ProcessBloc, ProcessState>(
             listener: (context, state) {
               if (state is GetProcessesState) {
+                print("📋 Processus reçus du backend:");
+                for (var item in state.process) {
+                  print("  - ${item.descripcion}");
+                }
+                
                 if (widget.isDown) {
                   for (var item in state.process) {
                     item.valor = (item.valor == null) ? false : item.valor;
@@ -204,7 +222,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
               }
               if (state is TokenErrorInProcessState) {
                 WService.clearPref();
-                Map obj = {'message': 'Token inválido. Inicie sesión'};
+                Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
                 Navigator.pushNamed(
                   context,
                   LoginViewRoute,
@@ -256,6 +274,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
                                     child: Container(
                                         width: screenWidth * 0.6,
                                         child: Text(
+                                            _translations[_proccessList[index].descripcion] ?? 
                                             _proccessList[index].descripcion ?? '',
                                             style:
                                                 LabelSMBlueNormalInputTextStyle,
@@ -281,7 +300,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
       listener: (context, state) {
         if (state is TokenErrorInProcessState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -328,7 +347,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
         }
 
         if (state is UpdateVisitState) {
-          if (_stateText == "Cerrado") {
+          if (_stateText == "Fermé") {
             Map obj = {'visit': state.visit, 'stateStore': widget.isDown};
             Navigator.pushNamed(context, LocationAgentViewRoute,
                 arguments: obj);
@@ -344,7 +363,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
         }
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -379,7 +398,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text((!widget.isDown) ? "Entrevistar" : "Ubicar tienda",
+            Text((!widget.isDown) ? "Interroger" : "Localiser le magasin",
                 style: SemiTitleBlueTextStyle),
             SizedBox(width: 10),
             Icon(Icons.arrow_forward_ios, color: PrimaryThemeColor)
@@ -414,7 +433,7 @@ class _ProccesVisitState extends State<ProccesVisitSFull> {
           CustomSnackbar.snackBar(
               contextSnack: contextSnack,
               isError: true,
-              message: "Seleccione al menos una gestión");
+              message: "Veuillez sélectionner au moins une gestion");
           break;
         } else {
           visit.estado = 2;

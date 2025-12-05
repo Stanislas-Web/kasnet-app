@@ -97,14 +97,15 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: PrimaryThemeColor,
-        title: Text("Registro de Foto"),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Enregistrement de photo", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.input),
               onPressed: () async {
                 final action = await CustomDialogConfirm.yesAbortDialog(
-                    context, "", "¿Desea cerrar sesión?");
+                    context, "", "Voulez-vous vous déconnecter ?");
                 if (action == DialogAction.yes) {
                   WService.clearPref();
                   _googleSignIn.signOut();
@@ -169,7 +170,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
                       children: <Widget>[
                         (widget.isDown &&
                                 visitReceived.estadoAgente?.toLowerCase() !=
-                                    "cerrado")
+                                    "fermé")
                             ? Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -178,7 +179,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
                                     padding: const EdgeInsets.only(
                                         left: 0.0, right: 0.0),
                                     child: Text(
-                                        "¿Firmo acta de desinstalación?",
+                                        "A-t-il signé l'acte de désinstallation ?",
                                         style: LabelBlueNormalInput,
                                         textAlign: TextAlign.start),
                                   ),
@@ -188,40 +189,40 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
                                           Radio<String>(
-                                            value: 'Si',
+                                            value: 'Oui',
                                             groupValue: saved,
                                             activeColor: PrimaryThemeColor,
-                                            onChanged: (disabled?.contains('Si') ?? false) ? null : (value) {
+                                            onChanged: (disabled?.contains('Oui') ?? false) ? null : (value) {
                                               setState(() {
                                                 saved = value;
                                                 disabled = [];
                                                 WService.acta = value;
                                                 isgnedText = value ?? '';
-                                                isSigned = (value == "Si");
+                                                isSigned = (value == "Oui");
                                                 visitReceived.firmaActaDesinstalacion = isSigned;
                                                 disabled?.add(value ?? '');
                                               });
                                             },
                                           ),
-                                          Text('Si', style: LabelBlueNormalInputText),
+                                          Text('Oui', style: LabelBlueNormalInputText),
                                           SizedBox(width: 20),
                                           Radio<String>(
-                                            value: 'No',
+                                            value: 'Non',
                                             groupValue: saved,
                                             activeColor: PrimaryThemeColor,
-                                            onChanged: (disabled?.contains('No') ?? false) ? null : (value) {
+                                            onChanged: (disabled?.contains('Non') ?? false) ? null : (value) {
                                               setState(() {
                                                 saved = value;
                                                 disabled = [];
                                                 WService.acta = value;
                                                 isgnedText = value ?? '';
-                                                isSigned = (value == "Si");
+                                                isSigned = (value == "Oui");
                                                 visitReceived.firmaActaDesinstalacion = isSigned;
                                                 disabled?.add(value ?? '');
                                               });
                                             },
                                           ),
-                                          Text('No', style: LabelBlueNormalInputText),
+                                          Text('Non', style: LabelBlueNormalInputText),
                                         ],
                                       ))
                                 ],
@@ -234,10 +235,10 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
                               padding: (widget.isDown &&
                                       visitReceived.estadoAgente
                                               ?.toLowerCase() !=
-                                          "cerrado")
+                                          "fermé")
                                   ? const EdgeInsets.all(0)
                                   : const EdgeInsets.all(30),
-                              child: Text("Toma una foto de la fachada",
+                              child: Text("Prenez une photo de la façade",
                                   style: LabelBlueNormalInput,
                                   textAlign: TextAlign.center),
                             )
@@ -298,9 +299,9 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
           children: <Widget>[
             Text(
                 (widget.isDown ||
-                        visitReceived.estadoAgente?.toLowerCase() == "cerrado")
-                    ? "Comentar Visita"
-                    : "Tomar foto voucher",
+                        visitReceived.estadoAgente?.toLowerCase() == "fermé")
+                    ? "Commenter la visite"
+                    : "Prendre photo du bon",
                 style: TextStyle(
                     color: PrimaryThemeColor, fontSize: screenWidth * 0.045)),
             Icon(Icons.arrow_forward_ios, color: PrimaryThemeColor)
@@ -310,16 +311,16 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
       onPressed: () {
         if ((isgnedText == "" || isgnedText.isEmpty) &&
             widget.isDown &&
-            visitReceived.estadoAgente?.toLowerCase() != "cerrado") {
+            visitReceived.estadoAgente?.toLowerCase() != "fermé") {
           CustomSnackbar.snackBar(
               contextSnack: contextSnack,
               isError: true,
-              message: "Indique si realizó la firma");
+              message: "Veuillez indiquer si vous avez effectué la signature");
         } else if (_imageFile.length == 0) {
           CustomSnackbar.snackBar(
               contextSnack: contextSnack,
               isError: true,
-              message: "Tomar la foto de la fachada");
+              message: "Veuillez prendre la photo de la façade");
         } else {
           BlocProvider.of<VisitBloc>(context)
               .add(DeletePhotosEvent(id: visitReceived.id!, type: 0));
@@ -372,7 +373,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
           } else {
             Map obj = {'visit': visitReceived, 'stateStore': widget.isDown};
             if (widget.isDown) {
-              if (visitReceived.estadoAgente?.toLowerCase() != "cerrado") {
+              if (visitReceived.estadoAgente?.toLowerCase() != "fermé") {
                 visitReceived.estado = 6;
                 BlocProvider.of<VisitBloc>(context)
                     .add(UpdateVisitEvent(visit: visitReceived));
@@ -385,7 +386,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
                 );
               }
             } else {
-              if (visitReceived.estadoAgente?.toLowerCase() != "cerrado") {
+              if (visitReceived.estadoAgente?.toLowerCase() != "fermé") {
                 WService.fotoFachada = 0;
                 Navigator.pushNamed(
                   context,
@@ -405,7 +406,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
         }
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -417,7 +418,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
           CustomSnackbar.snackBar(
               contextSnack: contextSnack,
               isError: true,
-              message: "No se pudo actualizar la data");
+              message: "Impossible de mettre à jour les données");
         }
         if (state is LoadingVisitState) {
           (state is LoadingVisitState) ? _isLoading = true : _isLoading = false;
@@ -501,7 +502,7 @@ class _RegisterPhotoBannerState extends State<RegisterPhotoBannerSFull> {
           contextSnack: contextSnack,
           isError: true,
           message:
-              "Elimine una foto para poder tomar otra. Se pueden tomar como máximo 2 fotos.");
+              "Supprimez une photo pour pouvoir en prendre une autre. Vous pouvez prendre un maximum de 2 photos.");
       return;
     }
     try {

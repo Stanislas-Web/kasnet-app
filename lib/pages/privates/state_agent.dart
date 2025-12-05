@@ -54,18 +54,18 @@ class _StateAgentState extends State<StateAgentSFull> {
   // GlobalKey<AutoCompleteTextFieldState<dynamic>> key = GlobalKey();
 
   late String previousState;
-  String _stateText = "Seleccione Estado";
+  String _stateText = "Sélectionnez l'état";
   bool isLoadingVisit = false;
 
-  late BuildContext contextLB;
+  BuildContext? contextLB;  // Rendre nullable
 
   List<Generic> _stateList = [];
   List<String> _stateListString = [];
-  Generic state1 = Generic(description: "Abierto", value: false);
-  Generic state2 = Generic(description: "Cerrado", value: false);
+  Generic state1 = Generic(description: "Ouvert", value: false);
+  Generic state2 = Generic(description: "Fermé", value: false);
   Generic stateSelected =
-      Generic(description: "Seleccione estado", value: false);
-  String selectedItem = "Seleccione estado";
+      Generic(description: "Sélectionnez l'état", value: false);
+  String selectedItem = "Sélectionnez l'état";
 
   var _scaffoldKey;
   late GoogleSignIn _googleSignIn;
@@ -100,14 +100,15 @@ class _StateAgentState extends State<StateAgentSFull> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: PrimaryThemeColor,
-        title: Text("Visita Agente"),
+        iconTheme: IconThemeData(color: Colors.white),
+        title: Text("Visite d'agent", style: TextStyle(color: Colors.white)),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.input),
               onPressed: () async {
                 final action = await CustomDialogConfirm.yesAbortDialog(
-                    context, "", "¿Desea cerrar sesión?");
+                    context, "", "Voulez-vous vous déconnecter ?");
                 if (action == DialogAction.yes) {
                   WService.clearPref();
                   _googleSignIn.signOut();
@@ -130,7 +131,9 @@ class _StateAgentState extends State<StateAgentSFull> {
             );
           }),
           Logo(isKeyboard: isKeyboard),
-          _loading(screenHeight, screenWidth, contextLB),
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return _loading(screenHeight, screenWidth, context);
+          })
         ],
       ),
     );
@@ -160,7 +163,7 @@ class _StateAgentState extends State<StateAgentSFull> {
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.only(left: 0),
-                          child: Text("Estado en el que se encontró la tienda",
+                          child: Text("État dans lequel le magasin a été trouvé",
                               style: LabelBlueBoldInputTextStyle,
                               textAlign: TextAlign.start),
                         ),
@@ -182,7 +185,7 @@ class _StateAgentState extends State<StateAgentSFull> {
       listener: (context, state) {
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -201,7 +204,7 @@ class _StateAgentState extends State<StateAgentSFull> {
             : isLoadingVisit = false;
 
         if (state is UpdateVisitState) {
-          if (_stateText == "Cerrado") {
+          if (_stateText == "Fermé") {
             Map obj = {
               'visit': state.visit,
               'stateStore': widget.isDown,
@@ -311,9 +314,9 @@ class _StateAgentState extends State<StateAgentSFull> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-                (_stateText == "Abierto")
-                    ? "Seleccionar Gestión"
-                    : "Ubicar tienda",
+                (_stateText == "Ouvert")
+                    ? "Sélectionner la gestion"
+                    : "Localiser le magasin",
                 style: SemiTitleBlueTextStyle),
             SizedBox(width: 10),
             Icon(Icons.arrow_forward_ios, color: PrimaryThemeColor)
@@ -323,15 +326,22 @@ class _StateAgentState extends State<StateAgentSFull> {
       onPressed: () {
         if (_stateText == "" ||
             _stateText == null ||
-            _stateText == "Seleccione Estado") {
+            _stateText == "Sélectionnez l'état") {
           CustomSnackbar.snackBar(
               contextSnack: contextSnack,
               isError: true,
-              message: "Seleccione el estado de la tienda");
+              message: "Veuillez sélectionner l'état du magasin");
         } else {
           Visit visit = new Visit();
           visit = visitReceived;
-          visit.estadoAgente = _stateText;
+          // Mapper les valeurs françaises vers espagnol pour le backend
+          String estadoBackend = _stateText;
+          if (_stateText == "Ouvert") {
+            estadoBackend = "ABIERTO";
+          } else if (_stateText == "Fermé") {
+            estadoBackend = "CERRADO";
+          }
+          visit.estadoAgente = estadoBackend;
           visit.estado = 1;
           BlocProvider.of<VisitBloc>(context)
               .add(UpdateVisitEvent(visit: visit));

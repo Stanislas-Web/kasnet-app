@@ -99,12 +99,19 @@ class SimpleVisit extends AgentLogic {
     if (visit.comentario?.isNotEmpty ?? false) {
       WService.comentaryPref = visit.comentario ?? '';
     }
+    print("🔵 =================================");
+    print("🔵 DEBUT updateVisit - Appel Backend");
+    print("🔵 URL: ${url}visita/update");
+    print("🔵 Estado: ${visit.estado}");
+    print("🔵 Estado Agente: ${visit.estadoAgente}");
+    print("🔵 Tipo Gestion: ${visit.tipoGestion}");
+    print("🔵 =================================");
+    
     HttpClientRequest request =
         await client.putUrl(Uri.parse(url + 'visita/update'));
     request.headers.set('content-type', contentType);
     request.headers.set(HttpHeaders.authorizationHeader, authorization);
-    print("Auth:");
-    print(authorization);
+    print("🔑 Auth: $authorization");
 
     if (WService.stateAgent == 0) {
       visit.esTitular = "";
@@ -160,20 +167,41 @@ class SimpleVisit extends AgentLogic {
       "tsmedioList": visit.tsmedioList,
       "username": visit.username
     });
+    print("📤 Payload envoyé:");
+    print(obj);
+    print("⏳ Envoi de la requête...");
+    
     request.write(obj);
+    
+    print("⏳ Attente de la réponse du serveur...");
     HttpClientResponse response = await request.close();
+    
+    print("✅ Réponse reçue - Status Code: ${response.statusCode}");
+    
     if (response.statusCode == 200) {
       var responseTransform = await response.transform(utf8.decoder).join();
       final decodeData = json.decode(responseTransform);
+      print("📥 Réponse décodée: $decodeData");
       Visit responseMethod = Visit.fromJson(decodeData);
+      print("✅ Visit mise à jour avec succès");
       return responseMethod;
     } else if (response.statusCode == 403 || response.statusCode == 401) {
+      print("❌ Erreur 403/401 - Forbidden/Unauthorized");
       throw VisitForbiddenException;
     } else if (response.statusCode == 400) {
+      print("❌ Erreur 400 - Bad Request");
+      var errorBody = await response.transform(utf8.decoder).join();
+      print("❌ Détails: $errorBody");
       throw VisitFormatException;
     } else if (response.statusCode == 500) {
+      print("❌ Erreur 500 - Erreur Serveur");
+      var errorBody = await response.transform(utf8.decoder).join();
+      print("❌ Détails: $errorBody");
       throw VisitServerException;
     } else {
+      print("❌ Erreur ${response.statusCode} - Erreur Générique");
+      var errorBody = await response.transform(utf8.decoder).join();
+      print("❌ Détails: $errorBody");
       throw VisitGenericException;
     }
   }

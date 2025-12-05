@@ -75,8 +75,13 @@ class Agent {
   Agent.fromJson(Map<String, dynamic> json) {
     codigo = json['codigo'];
     nombreComercio = json['nombreComercio'];
-    estado = new StateAgent(
-        nombre: json['estado']['nombre'], fecha: json['estado']['fecha']);
+    // Gérer le cas où 'estado' est un String ou un objet
+    if (json['estado'] is String) {
+      estado = new StateAgent(nombre: json['estado'], fecha: null);
+    } else if (json['estado'] is Map) {
+      estado = new StateAgent(
+          nombre: json['estado']['nombre'], fecha: json['estado']['fecha']);
+    }
     //
     id = json['id'];
     direccion = json['direccion'];

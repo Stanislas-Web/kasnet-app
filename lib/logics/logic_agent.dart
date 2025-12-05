@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:un/logics/logic.dart';
 import 'package:un/models/agent.dart';
 import 'package:un/models/find_agent.dart';
@@ -30,31 +31,27 @@ class SimpleAgent extends AgentLogic {
 
   @override
   Future<List<Agent>> getAgents({required String codeStore}) async {
-    await forceSelfCertified();
-    await loadSesionDataLocal();
-    await loadHeaderTokenLocal();
-
-    HttpClientRequest request = await client.getUrl(
-        Uri.parse(url + 'agente/find/codestartingwith?code=$codeStore'));
-    request.headers.set('content-type', contentType);
-    request.headers.set(HttpHeaders.authorizationHeader, authorization);
-    HttpClientResponse response = await request.close();
-    print("agentes response code: ");
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      var responseTransform = await response.transform(utf8.decoder).join();
-      final decodeData = json.decode(responseTransform);
-      final document = new Agents.fromJsonList(decodeData);
+    try {
+      // Charger le fichier JSON local
+      print("🔍 Recherche d'agents avec code: $codeStore");
+      final String jsonString = await rootBundle.loadString('assets/agents_final.json');
+      final List<dynamic> jsonData = json.decode(jsonString);
+      
+      // Filtrer les agents dont le codigo commence par codeStore
+      final List<dynamic> filteredData = jsonData.where((agent) {
+        final String codigo = agent['codigo'] ?? '';
+        return codigo.startsWith(codeStore);
+      }).toList();
+      
+      print("📊 Agents trouvés: ${filteredData.length}");
+      
+      // Convertir en objets Agent
+      final document = Agents.fromJsonList(filteredData);
       agentList = document.items;
       return agentList;
-    } else if (response.statusCode == 403 || response.statusCode == 401) {
-      throw AgentForbiddenException;
-    } else if (response.statusCode == 400) {
-      throw AgentFormatException;
-    } else if (response.statusCode == 500) {
-      throw AgentServerException;
-    } else {
-      throw AgentGenericException;
+    } catch (e) {
+      print("❌ Erreur lors de la lecture du fichier JSON: $e");
+      throw AgentGenericException();
     }
   }
 

@@ -1,0 +1,44 @@
+[
+  {
+    "codigo": "1",
+    "descripcion": "Instalacion de Equipo",
+    "accion": "INSTALACION",
+    "activo": true,
+    "flujoDePantallas": ["info", "location", "photo"]
+  },
+  {
+    "codigo": "2",
+    "descripcion": "Capacitacion",
+    "accion": "CAPACITACION",
+    "activo": true,
+    "flujoDePantallas": ["info", "photo"]
+  },
+  {
+    "codigo": "3",
+    "descripcion": "Mantenimiento de Equipos y Suministro",
+    "accion": "MANTENIMIENTO",
+    "activo": true,
+    "flujoDePantallas": ["info", "photo"]
+  },
+  {
+    "codigo": "4",
+    "descripcion": "Seguimiento Comercial",
+    "accion": "SEGUIMIENTO",
+    "activo": true,
+    "flujoDePantallas": ["info", "photo"]
+  },
+  {
+    "codigo": "5",
+    "descripcion": "Recojo de Equipo",
+    "accion": "RECOJO",
+    "activo": true,
+    "flujoDePantallas": ["location", "photo"]
+  },
+  {
+    "codigo": "6",
+    "descripcion": "Encargo Varios",
+    "accion": "ENCARGO",
+    "activo": true,
+    "flujoDePantallas": ["photo"]
+  }
+]
