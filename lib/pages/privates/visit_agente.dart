@@ -103,14 +103,14 @@ class _VisitAgentState extends State<VisitAgentSFull> {
       key: _scaffoldKey,
       appBar: AppBar(
         backgroundColor: PrimaryThemeColor,
-        title: Text("Busqueda de Agentes"),
+        title: Text("Recherche d'agents"),
         centerTitle: true,
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.input),
               onPressed: () async {
                 final action = await CustomDialogConfirm.yesAbortDialog(
-                    context, "", "¿Desea cerrar sesión?");
+                    context, "", "Voulez-vous vous déconnecter ?");
                 if (action == DialogAction.yes) {
                   WService.clearPref();
                   _googleSignIn.signOut();
@@ -158,7 +158,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                         if (state is TokenErrorInAgentState) {
                           WService.clearPref();
                           Map obj = {
-                            'message': 'Token inválido. Inicie sesión'
+                            'message': 'Token invalide. Veuillez vous reconnecter'
                           };
                           Navigator.pushNamed(
                             context,
@@ -217,7 +217,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: <Widget>[
-                                    Text("ID/Código de Agente*",
+                                    Text("ID/Code de l'agent*",
                                         style: LabelBlueBoldInputTextStyle,
                                         textAlign: TextAlign.start),
                                     _inputEnterpriseFake(screenWidth),
@@ -277,7 +277,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    "ESTADOS DEL AGENTE",
+                    "ÉTATS DE L'AGENT",
                     textAlign: TextAlign.start,
                     style: SemiTitleLightTextStyle,
                   ),
@@ -304,7 +304,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                                   borderRadius: BorderRadius.circular(15),
                                   color: PrimaryThemeColor),
                             ),
-                            Text("Instalado",
+                            Text("Installé",
                                 style: LabelSMBlueNormalInputTextStyle,
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
@@ -323,7 +323,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                                   borderRadius: BorderRadius.circular(15),
                                   color: Color.fromRGBO(52, 168, 83, 1)),
                             ),
-                            Text("Pre Agente",
+                            Text("Pré-agent",
                                 style: LabelSMBlueNormalInputTextStyle,
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
@@ -342,7 +342,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
                                   borderRadius: BorderRadius.circular(15),
                                   color: Color.fromRGBO(233, 67, 53, 1)),
                             ),
-                            Text("Baja",
+                            Text("Inactif",
                                 style: LabelSMBlueNormalInputTextStyle,
                                 overflow: TextOverflow.ellipsis,
                                 softWrap: true,
@@ -499,7 +499,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
         if (state is TokenErrorInVisitState) {
           WService.clearPref();
           _googleSignIn.signOut();
-          Map obj = {'message': 'Token inválido. Inicie sesión'};
+          Map obj = {'message': 'Token invalide. Veuillez vous reconnecter'};
           Navigator.pushNamed(
             context,
             LoginViewRoute,
@@ -581,7 +581,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
       CustomSnackbar.snackBar(
           contextSnack: contextSnack,
           isError: true,
-          message: "Seleccione un agente");
+          message: "Veuillez sélectionner un agent");
     }
   }
 
@@ -616,7 +616,7 @@ class _VisitAgentState extends State<VisitAgentSFull> {
       CustomSnackbar.snackBar(
           contextSnack: contextSnack,
           isError: true,
-          message: "Seleccione un agente");
+          message: "Veuillez sélectionner un agent");
     }
   }
 

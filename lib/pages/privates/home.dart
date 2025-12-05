@@ -73,7 +73,7 @@ class _HomeViewState extends State<HomeViewSFull> {
                 icon: Icon(Icons.input),
                 onPressed: () async {
                   final action = await CustomDialogConfirm.yesAbortDialog(
-                      context, "", "¿Desea cerrar sesión?");
+                      context, "", "Voulez-vous vous déconnecter ?");
                   if (action == DialogAction.yes) {
                     WService.clearPref();
                     _googleSignIn.signOut();
@@ -101,7 +101,7 @@ class _HomeViewState extends State<HomeViewSFull> {
                       CustomSnackbar.snackBar(
                           contextSnack: context,
                           isError: false,
-                          message: "Nueva versión disponible. Ver más...",
+                          message: "Nouvelle version disponible. Voir plus...",
                           isInteractive: true,
                           time: 10000);
                     }
@@ -128,7 +128,7 @@ class _HomeViewState extends State<HomeViewSFull> {
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.0)),
           child: Padding(
             padding: const EdgeInsets.only(top: 30),
-            child: Text("Bienvenida(o): " + username,
+            child: Text("Bienvenue : " + username,
                 textAlign: TextAlign.center, style: BtnLightTextStyle),
           ),
         ),
@@ -160,7 +160,7 @@ class _HomeViewState extends State<HomeViewSFull> {
                   SizedBox(width: 10),
                   Padding(
                     padding: EdgeInsets.only(right: screenWidth * 0.125),
-                    child: Text("Visita Agente",
+                    child: Text("Visite d'agent",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: PrimaryThemeColor,

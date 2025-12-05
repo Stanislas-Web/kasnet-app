@@ -54,7 +54,7 @@ class CustomDialogConfirm {
       onPressed: () {
         Navigator.of(context).pop(DialogAction.abort);
       },
-      child: Text("No",
+      child: Text("Non",
           style: TextStyle(color: Colors.white), textAlign: TextAlign.center),
     );
   }
@@ -71,7 +71,7 @@ class CustomDialogConfirm {
       onPressed: () {
         Navigator.of(context).pop(DialogAction.yes);
       },
-      child: Text("Sí", style: TextStyle(), textAlign: TextAlign.center),
+      child: Text("Oui", style: TextStyle(), textAlign: TextAlign.center),
     );
   }
 }

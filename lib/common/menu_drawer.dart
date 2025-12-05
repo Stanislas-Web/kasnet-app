@@ -43,12 +43,12 @@ class _MenuDrawerState extends State<MenuDrawerSFull> {
   final int? timeVisit;
 
   List<Map> options = [
-    {'home': 'Inicio'},
-    {'informationPersonal': 'Información personal'},
-    {'contracts': 'Contratos'},
-    {'authorizatioLetters': 'Cartas de autorización'},
-    {'changePassword': 'Cambiar clave'},
-    {'logout': 'Cerrar sesión'}
+    {'home': 'Accueil'},
+    {'informationPersonal': 'Informations personnelles'},
+    {'contracts': 'Contrats'},
+    {'authorizatioLetters': 'Lettres d\'autorisation'},
+    {'changePassword': 'Changer le mot de passe'},
+    {'logout': 'Déconnexion'}
   ];
   bool expandedItem = false;
   bool expandedItemData = false;
@@ -110,7 +110,7 @@ class _MenuDrawerState extends State<MenuDrawerSFull> {
                   context: context,
                   height: 50,
                   image: "assets/images/home/start.svg",
-                  text: "Inicio",
+                  text: "Accueil",
                   view: ""),
               _customDivider(),
               // SizedBox(height: 10.0,),
@@ -118,7 +118,7 @@ class _MenuDrawerState extends State<MenuDrawerSFull> {
                   context: context,
                   height: 55,
                   image: "assets/images/home/agent.svg",
-                  text: "Visita Agente",
+                  text: "Visite d'agent",
                   view: VisitAgentRoute),
               // SizedBox(height: 10.0,),
               _customDivider(),
@@ -126,7 +126,7 @@ class _MenuDrawerState extends State<MenuDrawerSFull> {
                   context: context,
                   height: 55,
                   image: "assets/images/home/close.svg",
-                  text: "Cerrar Sesión",
+                  text: "Déconnexion",
                   view: LoginViewRoute),
               // SizedBox(height: 10.0,),
               _customDivider(),
@@ -160,7 +160,7 @@ class _MenuDrawerState extends State<MenuDrawerSFull> {
             Navigator.pop(context);
           } else if (view == LoginViewRoute) {
             final action = await CustomDialogConfirm.yesAbortDialog(
-                context, "", "¿Desea cerrar sesión?");
+                context, "", "Voulez-vous vous déconnecter ?");
             if (action == DialogAction.yes) {
               WService.clearPref();
               _googleSignIn?.signOut();
@@ -185,7 +185,7 @@ class _MenuDrawerState extends State<MenuDrawerSFull> {
       alignment: Alignment.bottomRight,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text('Versión 1.1b',
+        child: Text('Version 1.1',
             style: TextStyle(color: Color.fromRGBO(32, 72, 142, 0.5))),
       ),
     );
